@@ -2,72 +2,115 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="author" content="ZHAO Wenyi" />
-    <title>SJTU校庆头像生成 | By ZWY</title>
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<title>SJTU校庆头像生成</title>
     <style type="text/css">
         html, body {
             background-color: white;
             position: relative;
             width: 100%;
             height: 100%;
+			margin: 0px;
+			text-align:center;
         }
-        #banner {
-            background-size:547px 548px;
-            background-repeat:no-repeat;
-            position: relative;
-            width:547px;
-            height: 548px;
-        }
-        #avatar {
-            background-size:316px 316px;
-            border-radius: 316px;
-            width: 316px;
-            height: 316px;
-            position: absolute;
-            /* z-index: 1; */
-            left: 114px;
-            top: 115px;
-        }
+		canvas#canvas {
+			display:none;
+		}
+		input#upload {
+			display: none;
+		}
+		.btn{ 
+			background-color:#FFF; 
+			border:1px solid #CDCDCD;
+		} 
     </style>
 </head>
-<body>
-    <div id="banner"></div>
-    <img id="avatar" src="" />
-    <br><br>
+<body id="view">
     <form>
-    <p><input id="upload" type="file" name="file" /></p>
+		<input id="upload" type="file" accept="image/*" />
+		<input type='button' id='upbt'class='btn' value='选择头像文件' /> 
         请选择校徽颜色：
         <select id="bannerColor">
-            <option value="blue">蓝色</option>
-            <option value="red">红色</option>
-            <option value="gold">金色</option>
-            <option value="black">黑色</option>
-            <option value="green">绿色</option>
-            <option value="grey">灰色</option>
+            <option value="0">蓝色</option>
+            <option value="1">红色</option>
+            <option value="2">金色</option>
+            <option value="3">黑色</option>
+            <option value="4">绿色</option>
+            <option value="5">灰色</option>
         </select> 
     </form>
-    <p>暂时未提供一键保存功能，请网页截图后自行裁剪。</p>
-    <a href="https://github.com/PeggyZWY" target="_blank">来 GitHub 联系我 ⊙▽⊙</a>
-
+	<p>长按保存图片</p>
+	<canvas id="canvas"></canvas>
+	<img id="showImg"></img>
     <script type="text/javascript">
+		'use strict';
+		var bgIndex=0;
+		var imgWidth=548,imgHeight=548,imgNum=6;
+		var uImgWidth=316,uImgHeight=316,uImgLeft,uImgTop;
+		var cv , ctx ;
+		var imgList;
+		var userImg=null;
+		var showImg;
         window.onload = function() {
-            var bannerDiv = document.getElementById("banner");
-            bannerDiv.style.backgroundImage = "url(sjtubanner_blue.png)"; 
+			var bd = document.getElementById("view");
+			var viewW = bd.offsetWidth;
+			imgWidth=imgHeight=viewW*0.9;
+			uImgWidth=imgWidth*316/548;
+			uImgHeight=imgHeight*316/548;
+			
+			uImgLeft=(imgWidth-uImgWidth)/2;
+			uImgTop=(imgHeight-uImgHeight)/2;
+			
+            var upbt = document.getElementById("upbt");
             var uploadBtn = document.getElementById("upload");
-            var bannerColorList = document.getElementById("bannerColor");
-
+            var saveBtn = document.getElementById("saveButton");
+			showImg= document.getElementById("showImg")
+	
+			var bannerColorList = document.getElementById("bannerColor");
+			cv = document.getElementById("canvas");
+			ctx = cv.getContext("2d");
+			
+			upbt.addEventListener("click",function(){
+				uploadBtn.click();
+			},false);
+			
             uploadBtn.addEventListener("change", function(event) {
                 var imgSrc = document.getElementById("upload").files[0];
                 var src = window.URL.createObjectURL(imgSrc);
-                document.getElementById("avatar").src = src;
+				userImg=new Image();
+				userImg.src =src
+				drawBeauty();
             }, false);
 
             bannerColorList.addEventListener("change", function(event) {
-                var i = bannerColorList.selectedIndex;
-                var color = bannerColorList.options[i].value; 
-                bannerDiv.style.backgroundImage = "url(sjtubanner_" + color + ".png)"; 
-            }, false);           
+                bgIndex = bannerColorList.selectedIndex;
+				drawBeauty();
+            }, false);
+			
+			//init
+			cv.width=imgWidth;
+			cv.height=imgHeight;
+			imgList=new Array();
+			for(var i=0;i<imgNum;i++){
+				var Img = new Image();
+				Img.src = "sjtubanner_" + i + ".png";
+				imgList.push(Img);
+			}
+			drawBeauty();
         }
+		function drawBeauty(){
+			if(!imgList[bgIndex].complete || (userImg!=null && !userImg.complete)){
+				setTimeout(drawBeauty,300);
+				return ;
+			}else{
+				ctx.clearRect(0, 0,imgWidth,imgHeight);
+				if(userImg!=null){
+					ctx.drawImage(userImg, uImgLeft, uImgTop,uImgWidth,uImgHeight);	
+				}
+				ctx.drawImage(imgList[bgIndex], 0, 0,imgWidth,imgHeight);
+				showImg.src=cv.toDataURL("image/png");
+			}
+		}
     </script>
 </body>
 </html>
