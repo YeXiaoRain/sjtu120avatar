@@ -2,33 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-	<title>SJTU校庆头像生成</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>SJTU校庆头像生成</title>
     <style type="text/css">
         html, body {
             background-color: white;
             position: relative;
             width: 100%;
             height: 100%;
-			margin: 0px;
-			text-align:center;
+            margin: 0px;
+            text-align:center;
         }
-		canvas#canvas {
-			display:none;
-		}
-		input#upload {
-			display: none;
-		}
-		.btn{ 
-			background-color:#FFF; 
-			border:1px solid #CDCDCD;
-		} 
+        canvas#canvas {
+            display:none;
+        }
+        input#upload {
+            display: none;
+        }
+        .btn{ 
+            background-color:#FFF; 
+            border:1px solid #CDCDCD;
+        } 
     </style>
 </head>
 <body id="view">
     <form>
-		<input id="upload" type="file" accept="image/*" />
-		<input type='button' id='upbt'class='btn' value='选择头像文件' /> 
+        <input id="upload" type="file" accept="image/*" />
+        <input type='button' id='upbt'class='btn' value='选择头像文件' /> 
         请选择校徽颜色：
         <select id="bannerColor">
             <option value="0">蓝色</option>
@@ -39,78 +39,78 @@
             <option value="5">灰色</option>
         </select> 
     </form>
-	<p>长按保存图片</p>
-	<canvas id="canvas"></canvas>
-	<img id="showImg"></img>
+    <p>长按保存图片</p>
+    <canvas id="canvas"></canvas>
+    <img id="showImg"></img>
     <script type="text/javascript">
-		'use strict';
-		var bgIndex=0;
-		var imgWidth=548,imgHeight=548,imgNum=6;
-		var uImgWidth=316,uImgHeight=316,uImgLeft,uImgTop;
-		var cv , ctx ;
-		var imgList;
-		var userImg=null;
-		var showImg;
+        'use strict';
+        var bgIndex=0;
+        var imgWidth=548,imgHeight=548,imgNum=6;
+        var uImgWidth=316,uImgHeight=316,uImgLeft,uImgTop;
+        var cv , ctx ;
+        var imgList;
+        var userImg=null;
+        var showImg;
         window.onload = function() {
-			var bd = document.getElementById("view");
-			var viewW = bd.offsetWidth;
-			imgWidth=imgHeight=viewW*0.9;
-			uImgWidth=imgWidth*316/548;
-			uImgHeight=imgHeight*316/548;
-			
-			uImgLeft=(imgWidth-uImgWidth)/2;
-			uImgTop=(imgHeight-uImgHeight)/2;
-			
+            var bd = document.getElementById("view");
+            var viewW = bd.offsetWidth;
+            imgWidth=imgHeight=viewW*0.9;
+            uImgWidth=imgWidth*316/548;
+            uImgHeight=imgHeight*316/548;
+            
+            uImgLeft=(imgWidth-uImgWidth)/2;
+            uImgTop=(imgHeight-uImgHeight)/2;
+            
             var upbt = document.getElementById("upbt");
             var uploadBtn = document.getElementById("upload");
             var saveBtn = document.getElementById("saveButton");
-			showImg= document.getElementById("showImg")
-	
-			var bannerColorList = document.getElementById("bannerColor");
-			cv = document.getElementById("canvas");
-			ctx = cv.getContext("2d");
-			
-			upbt.addEventListener("click",function(){
-				uploadBtn.click();
-			},false);
-			
+            showImg= document.getElementById("showImg")
+    
+            var bannerColorList = document.getElementById("bannerColor");
+            cv = document.getElementById("canvas");
+            ctx = cv.getContext("2d");
+            
+            upbt.addEventListener("click",function(){
+                uploadBtn.click();
+            },false);
+            
             uploadBtn.addEventListener("change", function(event) {
                 var imgSrc = document.getElementById("upload").files[0];
                 var src = window.URL.createObjectURL(imgSrc);
-				userImg=new Image();
-				userImg.src =src
-				drawBeauty();
+                userImg=new Image();
+                userImg.src =src
+                drawBeauty();
             }, false);
 
             bannerColorList.addEventListener("change", function(event) {
                 bgIndex = bannerColorList.selectedIndex;
-				drawBeauty();
+                drawBeauty();
             }, false);
-			
-			//init
-			cv.width=imgWidth;
-			cv.height=imgHeight;
-			imgList=new Array();
-			for(var i=0;i<imgNum;i++){
-				var Img = new Image();
-				Img.src = "sjtubanner_" + i + ".png";
-				imgList.push(Img);
-			}
-			drawBeauty();
+            
+            //init
+            cv.width=imgWidth;
+            cv.height=imgHeight;
+            imgList=new Array();
+            for(var i=0;i<imgNum;i++){
+                var Img = new Image();
+                Img.src = "sjtubanner_" + i + ".png";
+                imgList.push(Img);
+            }
+            drawBeauty();
         }
-		function drawBeauty(){
-			if(!imgList[bgIndex].complete || (userImg!=null && !userImg.complete)){
-				setTimeout(drawBeauty,300);
-				return ;
-			}else{
-				ctx.clearRect(0, 0,imgWidth,imgHeight);
-				if(userImg!=null){
-					ctx.drawImage(userImg, uImgLeft, uImgTop,uImgWidth,uImgHeight);	
-				}
-				ctx.drawImage(imgList[bgIndex], 0, 0,imgWidth,imgHeight);
-				showImg.src=cv.toDataURL("image/png");
-			}
-		}
+        function drawBeauty(){
+            if(!imgList[bgIndex].complete || (userImg!=null && !userImg.complete)){
+                setTimeout(drawBeauty,300);
+                return ;
+            }else{
+                ctx.clearRect(0, 0,imgWidth,imgHeight);
+                if(userImg!=null){
+                    ctx.drawImage(userImg, uImgLeft, uImgTop,uImgWidth,uImgHeight);    
+                }
+                ctx.drawImage(imgList[bgIndex], 0, 0,imgWidth,imgHeight);
+                showImg.src=cv.toDataURL("image/png");
+            }
+        }
     </script>
 </body>
 </html>
